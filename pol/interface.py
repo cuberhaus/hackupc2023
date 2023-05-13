@@ -15,7 +15,10 @@ class ImageChooser(QWidget):
 
         # create the "Which do you prefer?" label
         self.pref_label = QLabel("Which do you prefer?")
-        self.pref_label.setStyleSheet("font-size: 24px; font-weight: bold; margin-bottom: 20px;")
+        # self.pref_label.setStyleSheet("font-size: 24px; font-weight: bold; margin-bottom: 20px;")
+        self.pref_label.setStyleSheet("font-size: 32px; font-weight: bold; color: #333; margin-bottom: 20px; "
+                                      "text-align: center; letter-spacing: 2px;")
+
         self.pref_label.setAlignment(Qt.AlignCenter)
 
         # create the image displays and navigation buttons for array 1
@@ -81,24 +84,64 @@ class ImageChooser(QWidget):
         self.vote1_button.clicked.connect(self.vote_for_array1)
         self.vote2_button.clicked.connect(self.vote_for_array2)
 
-        # set the style sheet
+        # Set stylesheet for the main window
         self.setStyleSheet("""
-            * {
-                font-size: 18px;
-                font-weight: bold;
+            QMainWindow {
+                background-color: #CCFFCC;
             }
+
+            QLabel {
+                background-color: white;
+            }
+
             QPushButton {
-                background-color: #007aff;
-                color: #fff;
+                background-color: #3D9970;
+                color: white;
                 border: none;
-                padding: 10px 20px;
                 border-radius: 5px;
-                margin: 20px;
+                padding: 5px 10px;
+                font-size: 16px;
             }
+
             QPushButton:hover {
-                background-color: #0055ff;
+                background-color: #2E8B57;
+            }
+
+            QPushButton:pressed {
+                background-color: #135632;
             }
         """)
+
+        # Set the border properties for the image viewers
+        self.array1_label.setStyleSheet("""
+            border: 2px solid #3D9970;
+            border-radius: 5px;
+            padding: 5px;
+            """)
+        self.array2_label.setStyleSheet("""
+            border: 2px solid #3D9970;
+            border-radius: 5px;
+            padding: 5px;
+            """)
+
+        # set the style sheet
+        # self.setStyleSheet("""
+        #     * {
+        #         font-size: 18px;
+        #         font-weight: bold;
+        #     }
+        #     QPushButton {
+        #         background-color: #007aff;
+        #         color: #fff;
+        #         border: none;
+        #         padding: 10px 20px;
+        #         border-radius: 5px;
+        #         margin: 20px;
+        #     }
+        #     QPushButton:hover {
+        #         background-color: #0055ff;
+        #     }
+        # """)
 
     def vote_for_array1(self):
         # TODO: replace this with your own code to handle voting for array 1
