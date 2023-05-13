@@ -3,23 +3,26 @@ import random
 import json
 
 import numpy as np
+import pandas as pd
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog
 
+import gower
 
 class ImageChooser(QWidget):
     def __init__(self):
         super().__init__()
 
-        f = open('../restbai/hackupc2023_restbai__dataset_sample.json', encoding='utf-8')
-        self.data = json.load(f)
+        df = pd.read_json('../restbai/hackupc2023_restbai__dataset/hackupc2023_restbai__dataset_sample.json', encoding='utf-8')
+        self.data = df.transpose()
         self.userMatrix = [[]]
+        self.centroid = []
 
         # Choose two random rows
         idx1, idx2 = np.random.choice(self.data.shape[0], size=2, replace=False)
-        self.house1 = self.data[idx1, :]
-        self.house2 = self.data[idx2, :]
+        self.house1 = self.data.iloc[idx1, :]
+        self.house2 = self.data.iloc[idx2, :]
 
         # create the layout
         self.layout = QVBoxLayout()
@@ -161,11 +164,25 @@ class ImageChooser(QWidget):
 
         print(feat_list)
     def vote_for_array1(self):
+        self.userMatrix.append(self.house1)
 
+        # Create a Gower distance matrix
+        gower_dist = gower.gower_matrix(self.data)
+        self.centroid = np.mean(gower_dist, axis=0)
+        print("Centroid")
+        print(self.centroid)
+        print("User Matrix")
+        print(self.userMatrix)
+        # self.load_images()
         # TODO: replace this with your own code to handle voting for array 1
         print("Voted for array 1")
 
     def vote_for_array2(self):
+        self.userMatrix.append(self.house2)
+        # Create a Gower distance matrix
+        gower_dist = gower.gower_matrix(self.data)
+        self.centroid = np.mean(gower_dist, axis=0)
+        # self.load_images()
         # TODO: replace this with your own code to handle voting for array 2
         print("Voted for array 2")
 
