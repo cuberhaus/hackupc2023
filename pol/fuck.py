@@ -84,11 +84,11 @@ class ImageChooser(QWidget):
 
     def vote_for_array1(self):
         # TODO: replace this with your own code to handle voting for array 1
-        print("Voted for array 1")
+        print("Voted for house 1")
 
     def vote_for_array2(self):
         # TODO: replace this with your own code to handle voting for array 2
-        print("Voted for array 2")
+        print("Voted for house 2")
 
 
 if __name__ == '__main__':
