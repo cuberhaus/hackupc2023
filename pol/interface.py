@@ -1,5 +1,8 @@
 import sys
 import random
+import json
+
+import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog
@@ -8,6 +11,15 @@ from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QHBoxLay
 class ImageChooser(QWidget):
     def __init__(self):
         super().__init__()
+
+        f = open('../restbai/hackupc2023_restbai__dataset_sample.json', encoding='utf-8')
+        self.data = json.load(f)
+        self.userMatrix = [[]]
+
+        # Choose two random rows
+        idx1, idx2 = np.random.choice(self.data.shape[0], size=2, replace=False)
+        self.house1 = self.data[idx1, :]
+        self.house2 = self.data[idx2, :]
 
         # create the layout
         self.layout = QVBoxLayout()
@@ -127,7 +139,29 @@ class ImageChooser(QWidget):
             padding: 5px;
             """)
 
+    def extract_features(house):
+        feat_list = []
+        feat_list.append(house['city'])
+        feat_list.append(house['neighborhood'])
+        feat_list.append(house['region'])
+        feat_list.append(house['price'])
+        feat_list.append(house['square_meters'])
+        feat_list.append(house['bedrooms'])
+        feat_list.append(house['bathrooms'])
+
+        #R1R6
+        feat_list.append(house['image_data']['r1r6']['property'])
+        feat_list.append(house['image_data']['r1r6']['kitchen'])
+        feat_list.append(house['image_data']['r1r6']['bathroom'])
+        feat_list.append(house['image_data']['r1r6']['interior'])
+
+        #Style
+        feat_list.append(house['image_data']['style']['label'])
+        feat_list.append(house['property_type'])
+
+        print(feat_list)
     def vote_for_array1(self):
+
         # TODO: replace this with your own code to handle voting for array 1
         print("Voted for array 1")
 
