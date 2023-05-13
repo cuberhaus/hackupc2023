@@ -173,6 +173,19 @@ class ImageChooser(QWidget):
         print(self.centroid)
         print("User Matrix")
         print(self.userMatrix)
+
+        # Calculate the Gower distance between the centroid and all the other points in the dataset
+        distances = []
+        for point in self.data:
+            distance = gower.gower_distance([self.centroid], [point])
+            distances.append(distance)
+
+        # Find the index of the nearest neighbor to the centroid
+        index = distances.index(min(distances))
+
+        # Get the class or value of the nearest neighbor
+        nearest_neighbor = self.userMatrix[index]
+
         # self.load_images()
         # TODO: replace this with your own code to handle voting for array 1
         print("Voted for array 1")
@@ -182,6 +195,19 @@ class ImageChooser(QWidget):
         # Create a Gower distance matrix
         gower_dist = gower.gower_matrix(self.data)
         self.centroid = np.mean(gower_dist, axis=0)
+
+        # Calculate the Gower distance between the centroid and all the other points in the dataset
+        distances = []
+        for point in self.data:
+            distance = gower.gower_distance([self.centroid], [point])
+            distances.append(distance)
+
+        # Find the index of the nearest neighbor to the centroid
+        index = distances.index(min(distances))
+
+        # Get the class or value of the nearest neighbor
+        nearest_neighbor = self.userMatrix[index]
+        print(nearest_neighbor)
         # self.load_images()
         # TODO: replace this with your own code to handle voting for array 2
         print("Voted for array 2")
