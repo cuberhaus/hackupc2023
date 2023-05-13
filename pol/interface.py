@@ -16,9 +16,9 @@ class ImageChooser(QWidget):
         # create the "Which do you prefer?" label
         self.pref_label = QLabel("Which do you prefer?")
         # self.pref_label.setStyleSheet("font-size: 24px; font-weight: bold; margin-bottom: 20px;")
-        self.pref_label.setStyleSheet("font-size: 32px; font-weight: bold; color: #333; margin-bottom: 20px; "
+        self.pref_label.setStyleSheet("background: #CCFFCC; font-size: 32px; font-weight: bold; color: #333; "
+                                      "margin-bottom: 20px;"
                                       "text-align: center; letter-spacing: 2px;")
-
         self.pref_label.setAlignment(Qt.AlignCenter)
 
         # create the image displays and navigation buttons for array 1
@@ -127,25 +127,6 @@ class ImageChooser(QWidget):
             padding: 5px;
             """)
 
-        # set the style sheet
-        # self.setStyleSheet("""
-        #     * {
-        #         font-size: 18px;
-        #         font-weight: bold;
-        #     }
-        #     QPushButton {
-        #         background-color: #007aff;
-        #         color: #fff;
-        #         border: none;
-        #         padding: 10px 20px;
-        #         border-radius: 5px;
-        #         margin: 20px;
-        #     }
-        #     QPushButton:hover {
-        #         background-color: #0055ff;
-        #     }
-        # """)
-
     def vote_for_array1(self):
         # TODO: replace this with your own code to handle voting for array 1
         print("Voted for array 1")
@@ -189,3 +170,4 @@ if __name__ == "__main__":
     chooser = ImageChooser()
     chooser.show()
     sys.exit(app.exec_())
+
