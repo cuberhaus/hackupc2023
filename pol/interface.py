@@ -13,60 +13,14 @@ from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QHBoxLay
 import gower
 import requests
 
-
-# Add nested values as columns
-def data_to_table():
-    df = pd.read_json('../restbai/hackupc2023_restbai__dataset_sample.json')
-    df = df.transpose()
-
-    val_property = []
-    val_kitchen = []
-    val_bathroom = []
-    val_interior = []
-    val_style = []
-
-    for row in df['image_data']:
-        # print(row['r1r6']['property'])
-        val_property.append(row['r1r6']['property'])
-        val_kitchen.append(row['r1r6']['kitchen'])
-        val_bathroom.append(row['r1r6']['bathroom'])
-        val_interior.append(row['r1r6']['interior'])
-        val_style.append(row['style']['label'])
-
-    df['r1r6_property'] = val_property
-    df['r1r6_kitchen'] = val_kitchen
-    df['r1r6_bathroom'] = val_bathroom
-    df['r1r6_interior'] = val_interior
-    df['style'] = val_style
-
-
-    df.to_csv('database.csv', index=False)
-
-    return df
-
-def format_table():
-    # Add all relevant colums into the table
-    df = data_to_table()
-
-    #Edit None to be string
-    df['r1r6_property'] = df['r1r6_property'].fillna(0)
-    df['r1r6_kitchen'] = df['r1r6_kitchen'].fillna(0)
-    df['r1r6_bathroom'] = df['r1r6_bathroom'].fillna(0)
-    df['r1r6_interior'] = df['r1r6_interior'].fillna(0)
-    df['style'] = df['style'].fillna("Not set")
-
-    #Get just the columns we need
-    clean_df = df[['city', 'neighborhood', 'region', 'style', 'property_type', 'price', 'square_meters', 'bedrooms', 'bathrooms', 'r1r6_property', 'r1r6_kitchen', 'r1r6_bathroom', 'r1r6_interior', 'images']]
-
-    return clean_df
-
+from Tati.HouseMatch import *
 
 class ImageChooser(QWidget):
     def __init__(self):
         super().__init__()
         self.setFixedSize(670, 500)
 
-        df = pd.read_json('../restbai/hackupc2023_restbai__dataset/hackupc2023_restbai__dataset_sample.json', encoding='utf-8')
+        #df = pd.read_json('../restbai/hackupc2023_restbai__dataset/hackupc2023_restbai__dataset_sample.json', encoding='utf-8')
         self.data = format_table()
         self.userMatrix = [[]]
         self.centroid = []
@@ -97,7 +51,7 @@ class ImageChooser(QWidget):
         # create a layout for the array 1 display and navigation buttons
         self.array1_layout = QVBoxLayout()
         self.array1_layout.addWidget(self.array1_label)
-        self.array1_layout.addWidget(self.array1_prev_button)
+        self.array1_layout.addWidget(self.array1_prev_button, alignment=Qt.AlignVCenter)
         self.array1_layout.addWidget(self.array1_next_button)
 
         # create the image displays and navigation buttons for array 2
@@ -124,6 +78,9 @@ class ImageChooser(QWidget):
         # load the initial images for both arrays
         self.load_images_op1()
         self.load_images_op2()
+
+        # set the initial preferences
+        self.favorite_attributes = []
 
         # set the initial images to be displayed
         ''''
@@ -200,13 +157,8 @@ class ImageChooser(QWidget):
         # Create a Gower distance matrix
         gower_dist = gower.gower_matrix(self.data)
         self.centroid = np.mean(gower_dist, axis=0)
-        print("Centroid")
-        print(self.centroid)
-        print("User Matrix")
-        print(self.userMatrix)
-        #Me pasa los datos de la casa
-        #Sacar urls
-        #Cargar img
+        self.favorite_attributes = ponderate_attributes(self.favorite_attributes, self.house1)
+        self.house1 = find_nearest(self.house1, self.data)
         self.load_images_op1()
         print("Voted for array 1")
 
@@ -215,7 +167,7 @@ class ImageChooser(QWidget):
         # Create a Gower distance matrix
         gower_dist = gower.gower_matrix(self.data)
         self.centroid = np.mean(gower_dist, axis=0)
-        # self.load_images()
+        self.house2 = find_nearest(self.house2, self.data)
         self.load_images_op2()
         print("Voted for array 2")
 
