@@ -1,13 +1,28 @@
 import sys
 import random
+import json
+
+import numpy as np
+import pandas as pd
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog
 
+import gower
 
 class ImageChooser(QWidget):
     def __init__(self):
         super().__init__()
+
+        df = pd.read_json('../restbai/hackupc2023_restbai__dataset/hackupc2023_restbai__dataset_sample.json', encoding='utf-8')
+        self.data = df.transpose()
+        self.userMatrix = [[]]
+        self.centroid = []
+
+        # Choose two random rows
+        idx1, idx2 = np.random.choice(self.data.shape[0], size=2, replace=False)
+        self.house1 = self.data.iloc[idx1, :]
+        self.house2 = self.data.iloc[idx2, :]
 
         # create the layout
         self.layout = QVBoxLayout()
@@ -16,9 +31,9 @@ class ImageChooser(QWidget):
         # create the "Which do you prefer?" label
         self.pref_label = QLabel("Which do you prefer?")
         # self.pref_label.setStyleSheet("font-size: 24px; font-weight: bold; margin-bottom: 20px;")
-        self.pref_label.setStyleSheet("font-size: 32px; font-weight: bold; color: #333; margin-bottom: 20px; "
+        self.pref_label.setStyleSheet("background: #CCFFCC; font-size: 32px; font-weight: bold; color: #333; "
+                                      "margin-bottom: 20px;"
                                       "text-align: center; letter-spacing: 2px;")
-
         self.pref_label.setAlignment(Qt.AlignCenter)
 
         # create the image displays and navigation buttons for array 1
@@ -127,30 +142,47 @@ class ImageChooser(QWidget):
             padding: 5px;
             """)
 
-        # set the style sheet
-        # self.setStyleSheet("""
-        #     * {
-        #         font-size: 18px;
-        #         font-weight: bold;
-        #     }
-        #     QPushButton {
-        #         background-color: #007aff;
-        #         color: #fff;
-        #         border: none;
-        #         padding: 10px 20px;
-        #         border-radius: 5px;
-        #         margin: 20px;
-        #     }
-        #     QPushButton:hover {
-        #         background-color: #0055ff;
-        #     }
-        # """)
+    def extract_features(house):
+        feat_list = []
+        feat_list.append(house['city'])
+        feat_list.append(house['neighborhood'])
+        feat_list.append(house['region'])
+        feat_list.append(house['price'])
+        feat_list.append(house['square_meters'])
+        feat_list.append(house['bedrooms'])
+        feat_list.append(house['bathrooms'])
 
+        #R1R6
+        feat_list.append(house['image_data']['r1r6']['property'])
+        feat_list.append(house['image_data']['r1r6']['kitchen'])
+        feat_list.append(house['image_data']['r1r6']['bathroom'])
+        feat_list.append(house['image_data']['r1r6']['interior'])
+
+        #Style
+        feat_list.append(house['image_data']['style']['label'])
+        feat_list.append(house['property_type'])
+
+        print(feat_list)
     def vote_for_array1(self):
+        self.userMatrix.append(self.house1)
+
+        # Create a Gower distance matrix
+        gower_dist = gower.gower_matrix(self.data)
+        self.centroid = np.mean(gower_dist, axis=0)
+        print("Centroid")
+        print(self.centroid)
+        print("User Matrix")
+        print(self.userMatrix)
+        # self.load_images()
         # TODO: replace this with your own code to handle voting for array 1
         print("Voted for array 1")
 
     def vote_for_array2(self):
+        self.userMatrix.append(self.house2)
+        # Create a Gower distance matrix
+        gower_dist = gower.gower_matrix(self.data)
+        self.centroid = np.mean(gower_dist, axis=0)
+        # self.load_images()
         # TODO: replace this with your own code to handle voting for array 2
         print("Voted for array 2")
 
@@ -189,3 +221,4 @@ if __name__ == "__main__":
     chooser = ImageChooser()
     chooser.show()
     sys.exit(app.exec_())
+
