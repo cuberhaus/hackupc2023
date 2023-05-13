@@ -2,6 +2,8 @@ import sys
 import random
 import json
 
+import gower
+
 import numpy as np
 import pandas as pd
 from PyQt5.QtCore import Qt
@@ -9,13 +11,62 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog
 
 import gower
+import requests
+
+
+# Add nested values as columns
+def data_to_table():
+    df = pd.read_json('../restbai/hackupc2023_restbai__dataset_sample.json')
+    df = df.transpose()
+
+    val_property = []
+    val_kitchen = []
+    val_bathroom = []
+    val_interior = []
+    val_style = []
+
+    for row in df['image_data']:
+        # print(row['r1r6']['property'])
+        val_property.append(row['r1r6']['property'])
+        val_kitchen.append(row['r1r6']['kitchen'])
+        val_bathroom.append(row['r1r6']['bathroom'])
+        val_interior.append(row['r1r6']['interior'])
+        val_style.append(row['style']['label'])
+
+    df['r1r6_property'] = val_property
+    df['r1r6_kitchen'] = val_kitchen
+    df['r1r6_bathroom'] = val_bathroom
+    df['r1r6_interior'] = val_interior
+    df['style'] = val_style
+
+
+    df.to_csv('database.csv', index=False)
+
+    return df
+
+def format_table():
+    # Add all relevant colums into the table
+    df = data_to_table()
+
+    #Edit None to be string
+    df['r1r6_property'] = df['r1r6_property'].fillna(0)
+    df['r1r6_kitchen'] = df['r1r6_kitchen'].fillna(0)
+    df['r1r6_bathroom'] = df['r1r6_bathroom'].fillna(0)
+    df['r1r6_interior'] = df['r1r6_interior'].fillna(0)
+    df['style'] = df['style'].fillna("Not set")
+
+    #Get just the columns we need
+    clean_df = df[['city', 'neighborhood', 'region', 'style', 'property_type', 'price', 'square_meters', 'bedrooms', 'bathrooms', 'r1r6_property', 'r1r6_kitchen', 'r1r6_bathroom', 'r1r6_interior', 'images']]
+
+    return clean_df
+
 
 class ImageChooser(QWidget):
     def __init__(self):
         super().__init__()
 
         df = pd.read_json('../restbai/hackupc2023_restbai__dataset/hackupc2023_restbai__dataset_sample.json', encoding='utf-8')
-        self.data = df.transpose()
+        self.data = format_table()
         self.userMatrix = [[]]
         self.centroid = []
 
@@ -70,11 +121,13 @@ class ImageChooser(QWidget):
         self.layout.addLayout(self.viewer_layout)
 
         # load the initial images for both arrays
-        self.load_images()
+        self.load_images_op1()
+        self.load_images_op2()
 
         # set the initial images to be displayed
         self.current_array1_idx = 0
         self.current_array2_idx = 0
+        print(self.array1_images)
         self.set_image(self.array1_images[self.current_array1_idx], self.array1_label)
         self.set_image(self.array2_images[self.current_array2_idx], self.array2_label)
 
@@ -173,7 +226,10 @@ class ImageChooser(QWidget):
         print(self.centroid)
         print("User Matrix")
         print(self.userMatrix)
-        # self.load_images()
+        #Me pasa los datos de la casa
+        #Sacar urls
+        #Cargar img
+        self.load_images()
         # TODO: replace this with your own code to handle voting for array 1
         print("Voted for array 1")
 
@@ -186,10 +242,33 @@ class ImageChooser(QWidget):
         # TODO: replace this with your own code to handle voting for array 2
         print("Voted for array 2")
 
-    def load_images(self):
+    def load_images_op1(self):
         # TODO: replace this with your own code to load the images for both arrays
-        self.array1_images = [QPixmap(f'cats/cat.{i}.jpg') for i in range(1500, 1505)]
-        self.array2_images = [QPixmap(f'dogs/dog.{i}.jpg') for i in range(1500, 1505)]
+        #self.array1_images = [QPixmap(f'cats/cat.{i}.jpg')]
+        self.array1_images = []
+
+        for i, url in enumerate(self.house1['images']):
+            # Realiza una solicitud a la URL y obtiene los datos de la imagen
+            response = requests.get(url)
+            image_data = response.content
+
+            # Crea un QPixmap desde los datos de la imagen
+            pixmap = QPixmap()
+            pixmap.loadFromData(image_data)
+            self.array1_images.append(pixmap)
+
+    def load_images_op2(self):
+        self.array2_images = []
+
+        for i, url in enumerate(self.house2['images']):
+            # Realiza una solicitud a la URL y obtiene los datos de la imagen
+            response = requests.get(url)
+            image_data = response.content
+
+            # Crea un QPixmap desde los datos de la imagen
+            pixmap = QPixmap()
+            pixmap.loadFromData(image_data)
+            self.array2_images.append(pixmap)
 
     def set_image(self, pixmap, label):
         # set the image in the given label and scale it to fit the label size
