@@ -126,10 +126,12 @@ class ImageChooser(QWidget):
         self.load_images_op2()
 
         # set the initial images to be displayed
+        ''''
         self.current_array1_idx = 0
         self.current_array2_idx = 0
         self.set_image(self.array1_images[self.current_array1_idx], self.array1_label)
         self.set_image(self.array2_images[self.current_array2_idx], self.array2_label)
+        '''
 
         # connect the button clicks to the navigation functions
         self.array1_prev_button.clicked.connect(self.prev_array1)
@@ -186,36 +188,12 @@ class ImageChooser(QWidget):
         # Set the border properties for the image viewers
         self.array1_label.setStyleSheet("""
             border: 2px solid #3D9970;
-            border-radius: 5px;
-            padding: 5px;
             """)
         self.array2_label.setStyleSheet("""
             border: 2px solid #3D9970;
-            border-radius: 5px;
-            padding: 5px;
             """)
 
-    def extract_features(house):
-        feat_list = []
-        feat_list.append(house['city'])
-        feat_list.append(house['neighborhood'])
-        feat_list.append(house['region'])
-        feat_list.append(house['price'])
-        feat_list.append(house['square_meters'])
-        feat_list.append(house['bedrooms'])
-        feat_list.append(house['bathrooms'])
 
-        #R1R6
-        feat_list.append(house['image_data']['r1r6']['property'])
-        feat_list.append(house['image_data']['r1r6']['kitchen'])
-        feat_list.append(house['image_data']['r1r6']['bathroom'])
-        feat_list.append(house['image_data']['r1r6']['interior'])
-
-        #Style
-        feat_list.append(house['image_data']['style']['label'])
-        feat_list.append(house['property_type'])
-
-        print(feat_list)
     def vote_for_array1(self):
         self.userMatrix.append(self.house1)
 
@@ -230,7 +208,6 @@ class ImageChooser(QWidget):
         #Sacar urls
         #Cargar img
         self.load_images_op1()
-        # TODO: replace this with your own code to handle voting for array 1
         print("Voted for array 1")
 
     def vote_for_array2(self):
@@ -240,12 +217,11 @@ class ImageChooser(QWidget):
         self.centroid = np.mean(gower_dist, axis=0)
         # self.load_images()
         self.load_images_op2()
-        # TODO: replace this with your own code to handle voting for array 2
         print("Voted for array 2")
 
     def load_images_op1(self):
-        # TODO: replace this with your own code to load the images for both arrays
-        #self.array1_images = [QPixmap(f'cats/cat.{i}.jpg')]
+
+        self.current_array1_idx = 1
         self.array1_images = []
 
         for i, url in enumerate(self.house1['images']):
@@ -258,8 +234,13 @@ class ImageChooser(QWidget):
             pixmap.loadFromData(image_data)
             self.array1_images.append(pixmap)
 
+        self.set_image(self.array1_images[0], self.array1_label)
+
+
+
     def load_images_op2(self):
         self.array2_images = []
+        self.current_array2_idx = 1
 
         for i, url in enumerate(self.house2['images']):
             # Realiza una solicitud a la URL y obtiene los datos de la imagen
@@ -271,9 +252,11 @@ class ImageChooser(QWidget):
             pixmap.loadFromData(image_data)
             self.array2_images.append(pixmap)
 
+        self.set_image(self.array2_images[0], self.array2_label)
+
     def set_image(self, pixmap, label):
         # set the image in the given label and scale it to fit the label size
-        label.setPixmap(pixmap.scaled(label.size(), Qt.KeepAspectRatio))
+        label.setPixmap(pixmap.scaled(label.size()))
 
     def prev_array1(self):
         # go to the previous image in array 1
