@@ -64,6 +64,7 @@ def format_table():
 class ImageChooser(QWidget):
     def __init__(self):
         super().__init__()
+        self.setFixedSize(670, 500)
 
         df = pd.read_json('../restbai/hackupc2023_restbai__dataset/hackupc2023_restbai__dataset_sample.json', encoding='utf-8')
         self.data = format_table()
@@ -127,7 +128,6 @@ class ImageChooser(QWidget):
         # set the initial images to be displayed
         self.current_array1_idx = 0
         self.current_array2_idx = 0
-        print(self.array1_images)
         self.set_image(self.array1_images[self.current_array1_idx], self.array1_label)
         self.set_image(self.array2_images[self.current_array2_idx], self.array2_label)
 
@@ -229,7 +229,7 @@ class ImageChooser(QWidget):
         #Me pasa los datos de la casa
         #Sacar urls
         #Cargar img
-        self.load_images()
+        self.load_images_op1()
         # TODO: replace this with your own code to handle voting for array 1
         print("Voted for array 1")
 
@@ -239,6 +239,7 @@ class ImageChooser(QWidget):
         gower_dist = gower.gower_matrix(self.data)
         self.centroid = np.mean(gower_dist, axis=0)
         # self.load_images()
+        self.load_images_op2()
         # TODO: replace this with your own code to handle voting for array 2
         print("Voted for array 2")
 
