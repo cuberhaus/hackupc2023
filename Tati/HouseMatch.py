@@ -6,6 +6,8 @@ import ast
 f = open('../restbai/hackupc2023_restbai__dataset_sample.json', encoding='utf-8')
 data = json.load(f)
 
+range_vec = []
+
 def extract_features(house):
     feat_list = []
     feat_list.append(house['city'])
@@ -27,9 +29,6 @@ def extract_features(house):
     feat_list.append(house['property_type'])
 
     print(feat_list)
-
-#extract_features(data["303464"])
-
 
 # Define the Gower distance function
 def gower_distance(x, y, weight=None):
@@ -55,12 +54,12 @@ def gower_distance(x, y, weight=None):
         weight = np.ones(len(x))
     dist = np.sum(weight * (categorical * dist_cat + numerical * dist_num)) / np.sum(weight)
 
+    print(dist)
+
     return dist
 
-#range_finder()
-#print(gower_distance(data["303464"],data["303464"]))
 
-def format_table():
+def data_to_table():
     df = pd.read_json('../restbai/hackupc2023_restbai__dataset_sample.json')
     df = df.transpose()
 
@@ -85,9 +84,14 @@ def format_table():
 
     return df
 
-def data_to_table():
-    df = format_table()
-    df_new = df[['price', 'square_meters', 'bedrooms', 'bathrooms', 'r1r6_property', 'r1r6_kitchen', 'r1r6_bathroom', 'r1r6_interior']]
-    print(df_new)
+def format_table():
+    df = data_to_table()
+    df['r1r6_property'] = df['r1r6_property'].fillna("Not set")
+    df['r1r6_kitchen'] = df['r1r6_kitchen'].fillna("Not set")
+    df['r1r6_bathroom'] = df['r1r6_bathroom'].fillna("Not set")
+    df['r1r6_interior'] = df['r1r6_interior'].fillna("Not set")
+    range_vec = df[['price', 'square_meters', 'bedrooms', 'bathrooms', 'r1r6_property', 'r1r6_kitchen', 'r1r6_bathroom', 'r1r6_interior']]
+    print(range_vec)
 
-data_to_table()
+gower_distance(data['303464'], data['303464'])
+#format_table()
