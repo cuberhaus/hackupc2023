@@ -72,7 +72,8 @@ class ImageChooser(QWidget):
 
     def load_images(self, array_name):
         # TODO: replace this with your own code to load the images for the array
-        return [QPixmap(f'{array_name}/image{idx}.png') for idx in range(5)]
+
+        return [QPixmap(f'cats/cat.{idx}.jpg') for idx in range(1500, 1505)]
 
     def set_images(self, images, display):
         for image in images:
