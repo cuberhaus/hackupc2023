@@ -86,6 +86,9 @@ class ImageChooser(QWidget):
 
         # Set stylesheet for the main window
         self.setStyleSheet("""
+            QWidget {
+                background-color: #CCFFCC;
+            }
             QMainWindow {
                 background-color: #CCFFCC;
             }
