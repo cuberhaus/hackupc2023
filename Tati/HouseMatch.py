@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import json
 import pandas as pd
@@ -49,6 +51,14 @@ def gower_distance(x, y, weight=None):
     dist = np.sum(weight * (categorical * dist_cat + numerical * dist_num)) / np.sum(weight)
 
     return dist
+
+
+def euler_distance(fav_attr, list2):
+    list2 = list2[5:-1]
+    if len(fav_attr) != len(list2):
+        raise ValueError("Las listas deben tener la misma longitud")
+    distance_squared = sum((x - y) ** 2 for x, y in zip(fav_attr, list2))
+    return math.sqrt(distance_squared)
 
 
 # Add nested values as columns
@@ -104,14 +114,24 @@ def range_vec(df):
                     'r1r6_interior']]
     return range_vec
 
-def ponderate_attributes(my_preferences, new_info):
-    preferences = []
-    attributes = ['price', 'square_meters', 'bedrooms', 'bathrooms', 'r1r6_property', 'r1r6_kitchen', 'r1r6_bathroom',
-                    'r1r6_interior']
-    for attribute in attributes:
-        preferences.append(my_preferences[attribute] * 0.8 + new_info[attribute] * 0.2)
+def init_features_rand(df):
+    rangos = range_vec(df)
+    rangos = rangos.sample()
+    rangos = rangos.iloc[0].values.flatten().tolist()
+    print('rangos init')
+    print(rangos)
+    return rangos
 
-    print(preferences)
+def ponderate_attributes(my_preferences, new_info):
+    print(my_preferences)
+    print(new_info)
+    preferences = []
+    new_info = new_info[5:-1]
+    attributes = ['price', 'square_meters', 'bedrooms', 'bathrooms', 'r1r6_property', 'r1r6_kitchen', 'r1r6_bathroom',
+                  'r1r6_interior']
+    for i in range(len(attributes)):
+        preferences.append(float(my_preferences[i]) * 0.8 + float(new_info[i]) * 0.2)
+
     return preferences
 
 
@@ -130,5 +150,19 @@ def find_nearest(old_house, df):
     return new_house
 
 
+def find_nearest_numerical_only(fav_attributes, df):
+    min_distance = -1
+    dist_temp = -1
+    new_house = None
+    for house in df.iterrows():
+        dist_temp = euler_distance(fav_attributes, house[1])
+        if dist_temp != 0.0:
+            if dist_temp < min_distance or min_distance == -1:
+                min_distance = dist_temp
+                new_house = house[1]
+    print('Minimum distance euler: ' + str(min_distance))
+
+    return new_house
+
 df = format_table()
-ponderate_attributes(df.iloc[5][5:-1], df.iloc[4][5:-1])
+find_nearest_numerical_only([1,3,4,5,3,5,2,7], df)
