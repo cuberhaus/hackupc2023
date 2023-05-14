@@ -152,16 +152,14 @@ class ImageChooser(QWidget):
     def vote_for_array1(self):
         self.userMatrix.append(self.house1)
         self.favorite_attributes = ponderate_attributes(self.favorite_attributes, self.house1)
-        print((self.favorite_attributes))
-        print((self.data))
-        self.house1 = find_nearest(self.favorite_attributes, self.data)
+        self.house1 = find_nearest_numerical_only(self.favorite_attributes, self.data)
         self.load_images_op1()
         print("Voted for array 1")
 
     def vote_for_array2(self):
         self.userMatrix.append(self.house2)
         self.favorite_attributes = ponderate_attributes(self.favorite_attributes, self.house2)
-        self.house2 = find_nearest(self.house2, self.data)
+        self.house2 = find_nearest_numerical_only(self.favorite_attributes, self.data)
         self.load_images_op2()
         print("Voted for array 2")
 
