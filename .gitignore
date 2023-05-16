@@ -1,3 +1,4 @@
+*.orig
 restbai/hackupc2023_restbai__dataset/
 .idea*
 # Byte-compiled / optimized / DLL files
