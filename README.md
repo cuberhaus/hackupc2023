@@ -1,26 +1,64 @@
-# HackUPC 2023
+# HackUPC 2023 House Match
 
-Hackathon project from HackUPC 2023 — a house preference matching application that helps users find their ideal property using similarity-based comparison.
+This restored HackUPC 2023 desktop demo learns a house preference profile from
+pairwise choices, then ranks the next comparisons by mixed-feature similarity.
 
-## Overview
+## Run the demo
 
-The app presents the user with property images through a PyQt5 interface and uses Gower distance to compute similarity between houses based on multiple attributes, matching user preferences to available listings.
+Use Python 3.10 through 3.13. Python 3.12 is provided by the devcontainer and
+Python 3.13 is covered by the desktop test suite.
 
-## Structure
-
-```
-├── pol/
-│   ├── interface.py          # PyQt5 GUI (ImageChooser interface)
-│   └── obsolete/             # Earlier interface versions
-├── Tati/
-│   └── HouseMatch.py         # Gower distance-based house matching
-└── Pablesky/
-    ├── Untitled.ipynb         # Exploratory notebook
-    └── Testing.ipynb          # Testing notebook
+```powershell
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+.venv\Scripts\python -m pol.interface
 ```
 
-## Tech Stack
+On macOS or Linux, replace `.venv\Scripts\python` with `.venv/bin/python`.
+The root-level launch command reads the 100-listing sample JSON directly from
+`restbai/hackupc2023_restbai__dataset.zip`; do not extract the approximately
+1.36 GB full dataset. Listing images are optional live HTTP downloads. A
+timeout, invalid response, or unavailable URL produces an in-application
+fallback instead of stopping the comparison.
 
-- **Python** with PyQt5, NumPy, pandas
-- **Gower** distance for mixed-type similarity
-- **Jupyter Notebooks** for prototyping
+## Recommendation policy
+
+Each listing has five categorical features: city, neighborhood, region, image
+style, and property type. It also has eight numerical features: price, area,
+bedrooms, bathrooms, and four visual scores for the property, kitchen,
+bathroom, and interior.
+
+Missing categorical values become `Unknown`. Missing numerical values use the
+sample median for that feature, then every numerical feature is min-max
+normalized to `[0, 1]`; constant features map to `0.5`. Similarity uses an
+equal-weight Gower-style distance: categorical values contribute `0` when they
+match and `1` otherwise, while normalized numerical values contribute their
+absolute difference. A vote adds the chosen listing to the preference profile
+and presents the closest unused pair that does not contain either listing from
+the preceding comparison when enough candidates remain.
+
+The recommendation core in `Tati/recommender.py` performs no work at import.
+`Tati/HouseMatch.py` remains as a compatibility import surface. The notebooks
+in `Pablesky/` and interfaces under `pol/obsolete/` are historical hackathon
+artifacts and are not part of the supported demo.
+
+## Test
+
+```powershell
+$env:QT_QPA_PLATFORM = "offscreen"
+.venv\Scripts\python -m unittest -v
+```
+
+The tests are hermetic: dataset fixtures use temporary ZIPs, HTTP is replaced
+with local doubles, and the GUI runs offscreen.
+
+## Desktop smoke test
+
+1. Launch `.venv\Scripts\python -m pol.interface` from the repository root.
+2. Confirm two different houses show details and either an image or a visible
+    image-unavailable message.
+3. For a house with multiple images, use **Previous image** and **Next image**
+    and confirm the displayed image changes.
+4. Vote for either house at least three times. Confirm the vote count advances
+    and each vote presents two different houses without immediately reusing the
+    preceding pair.

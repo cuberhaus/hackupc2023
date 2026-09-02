@@ -3,6 +3,7 @@
 restbai/hackupc2023_restbai__dataset/
 .idea*
 # Byte-compiled / optimized / DLL files
+.venv/
 __pycache__/
 *.py[cod]
 *$py.class
