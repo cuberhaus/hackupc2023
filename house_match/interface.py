@@ -17,8 +17,8 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from pol.image_loader import ImageLoadError, fetch_image
-from Tati.HouseMatch import (
+from house_match.image_loader import ImageLoadError, fetch_image
+from house_match.recommender import (
     DatasetError,
     RecommendationEngine,
     listing_details,

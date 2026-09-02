@@ -11,7 +11,7 @@ Python 3.13 is covered by the desktop test suite.
 ```powershell
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
-.venv\Scripts\python -m pol.interface
+.venv\Scripts\python -m house_match.interface
 ```
 
 On macOS or Linux, replace `.venv\Scripts\python` with `.venv/bin/python`.
@@ -37,10 +37,10 @@ absolute difference. A vote adds the chosen listing to the preference profile
 and presents the closest unused pair that does not contain either listing from
 the preceding comparison when enough candidates remain.
 
-The recommendation core in `Tati/recommender.py` performs no work at import.
-`Tati/HouseMatch.py` remains as a compatibility import surface. The notebooks
-in `Pablesky/` and interfaces under `pol/obsolete/` are historical hackathon
-artifacts and are not part of the supported demo.
+The `house_match/` package contains the supported recommendation core, image
+loader, and desktop interface, and performs no work at import. The notebooks
+in `notebooks/` and assets and interface under `legacy/` are historical
+hackathon artifacts and are not part of the supported demo.
 
 ## Test
 
@@ -54,11 +54,12 @@ with local doubles, and the GUI runs offscreen.
 
 ## Desktop smoke test
 
-1. Launch `.venv\Scripts\python -m pol.interface` from the repository root.
+1. Launch `.venv\Scripts\python -m house_match.interface` from the repository
+   root.
 2. Confirm two different houses show details and either an image or a visible
-    image-unavailable message.
+   image-unavailable message.
 3. For a house with multiple images, use **Previous image** and **Next image**
-    and confirm the displayed image changes.
+   and confirm the displayed image changes.
 4. Vote for either house at least three times. Confirm the vote count advances
-    and each vote presents two different houses without immediately reusing the
-    preceding pair.
+   and each vote presents two different houses without immediately reusing the
+   preceding pair.

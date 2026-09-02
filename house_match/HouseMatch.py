@@ -1,6 +1,6 @@
 """Compatibility imports for the restored recommendation core."""
 
-from Tati.recommender import (
+from house_match.recommender import (
     DatasetError,
     FeatureSpace,
     FeatureVector,

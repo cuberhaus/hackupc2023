@@ -2,7 +2,7 @@ import io
 import socket
 import unittest
 
-from pol.image_loader import ImageLoadError, fetch_image
+from house_match.image_loader import ImageLoadError, fetch_image
 
 
 class FakeResponse:

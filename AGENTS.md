@@ -6,16 +6,16 @@ distance.
 
 ## Architecture
 
-- `pol/interface.py`: desktop entry point and asynchronous image presentation.
-- `pol/image_loader.py`: bounded HTTP image loading with validation and safe
-	errors.
-- `Tati/recommender.py`: side-effect-free sample loading, feature processing,
-	ranking, and pair progression.
-- `Tati/HouseMatch.py`: compatibility exports for the recommendation core.
+- `house_match/interface.py`: desktop entry point and asynchronous image
+  presentation.
+- `house_match/image_loader.py`: bounded HTTP image loading with validation and
+  safe errors.
+- `house_match/recommender.py`: side-effect-free sample loading, feature
+  processing, ranking, and pair progression.
 - `restbai/hackupc2023_restbai__dataset.zip`: tracked sample and full Restbai
-	property data; supported code reads only the nested sample member.
-- `Pablesky/` and `pol/obsolete/`: historical artifacts, outside the supported
-	runtime.
+  property data; supported code reads only the nested sample member.
+- `notebooks/` and `legacy/`: historical artifacts, outside the supported
+  runtime.
 
 ## Build and test
 
@@ -26,7 +26,7 @@ python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 $env:QT_QPA_PLATFORM = "offscreen"
 .venv\Scripts\python -m unittest -v
-.venv\Scripts\python -m pol.interface
+.venv\Scripts\python -m house_match.interface
 ```
 
 Tests must remain hermetic: use temporary archives, injected HTTP doubles, and

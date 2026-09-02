@@ -7,9 +7,9 @@ from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QApplication
 from PyQt5.sip import delete
 
-from pol.image_loader import ImageLoadError
-from pol.interface import ImageChooser, ImageTask
-from Tati.HouseMatch import RecommendationEngine
+from house_match.image_loader import ImageLoadError
+from house_match.interface import ImageChooser, ImageTask
+from house_match.recommender import RecommendationEngine
 from test_house_match import make_house
 
 

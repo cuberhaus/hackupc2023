@@ -4,7 +4,7 @@ import unittest
 import zipfile
 from pathlib import Path
 
-from Tati.HouseMatch import (
+from house_match.recommender import (
     DatasetError,
     FeatureSpace,
     RecommendationEngine,
@@ -148,7 +148,7 @@ def listing(price=150_000, images=None):
 
 
 def make_house(listing_id, price, square_meters=80.0, city="Barcelona"):
-    from Tati.HouseMatch import Listing
+    from house_match.recommender import Listing
 
     return Listing(
         listing_id=listing_id,
