@@ -32,9 +32,3 @@ $env:QT_QPA_PLATFORM = "offscreen"
 Tests must remain hermetic: use temporary archives, injected HTTP doubles, and
 the Qt offscreen platform. Recommendation imports must never write files,
 access the network, or execute the demo.
-
-## Scope
-
-The original hackathon material is frozen unless the user explicitly
-authorizes an issue. Keep authorized work narrowly scoped, preserve the
-pairwise desktop concept, and do not rewrite exploratory notebooks.
